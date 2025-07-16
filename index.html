@@ -115,14 +115,17 @@
                 border: 1px solid #ccc;
                 padding: 6px;
                 text-align: left;
+                vertical-align: middle;
             }
             #notes-table-print th {
                 background-color: #f2f2f2;
             }
             #notes-table-print img {
-                max-width: 70px !important;
-                max-height: 70px !important;
+                max-width: 80px !important;
+                max-height: 80px !important;
                 object-fit: cover;
+                display: block;
+                margin: auto;
             }
             @page {
                 size: landscape;
@@ -220,7 +223,7 @@
             </main>
         </div>
     </div>
-    <!-- [NEW] Wrapper untuk area print -->
+    <!-- Wrapper untuk area print -->
     <div id="print-area-wrapper" class="hidden"></div>
 
     <!-- Notifikasi Toast -->
@@ -318,7 +321,6 @@
         let cameraStream = null;
         let dailyNotesCache = []; // Cache untuk data CSV
         const dailyLogFileName = 'catatan_harian.csv';
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
         // --- Fungsi Utilitas & Tampilan ---
         const ICONS = { success: `<i data-feather="check-circle" class="text-green-400"></i>`, error: `<i data-feather="x-circle" class="text-red-400"></i>`, info: `<i data-feather="info" class="text-blue-400"></i>` };
@@ -326,12 +328,14 @@
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = error => reject(error); }); }
         
         // [REVISED] Fungsi ini mengambil gambar sebagai data mentah (blob) dan mengubahnya menjadi Base64
-        async function getImageAsBase64(url) {
+        async function urlToDataUri(url) {
             if (!url) return null;
             try {
-                // Gunakan proxy untuk menghindari masalah CORS
-                const response = await fetch(`${proxyUrl}${url}`);
-                if (!response.ok) return null;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.error(`HTTP error! status: ${response.status} for url ${url}`);
+                    return null;
+                }
                 const blob = await response.blob();
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
@@ -340,7 +344,7 @@
                     reader.readAsDataURL(blob);
                 });
             } catch (error) {
-                console.error(`Gagal memuat gambar dari ${url}:`, error);
+                console.error(`Gagal memuat atau konversi gambar dari ${url}:`, error);
                 return null;
             }
         }
@@ -527,41 +531,46 @@
             }
         }
         
-        // [REVISED] Fungsi print yang lebih baik
         async function handlePrint() {
-            const tableClone = tableModalElements.table.cloneNode(true);
-            tableClone.classList.remove('hidden');
-            tableClone.id = 'notes-table-print';
+            let tableHtml = `<h2 style="text-align: center; font-family: sans-serif; font-size: 16pt; font-weight: bold; margin-bottom: 20px;">LAPORAN KEGIATAN HARIAN</h2><table id="notes-table-print">`;
+            tableHtml += `<thead><tr><th>Tanggal</th><th>Hari</th><th>Uraian Kegiatan</th><th>Foto / Dokumentasi</th></tr></thead><tbody>`;
             
-            // Hapus kolom aksi
-            tableClone.querySelectorAll('tr').forEach(row => {
-                row.deleteCell(4); 
-            });
-
-            printAreaWrapper.innerHTML = '';
-            printAreaWrapper.appendChild(tableClone);
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            for (const note of dailyNotesCache) {
+                const date = new Date(note.Tanggal + 'T00:00:00');
+                const dayName = isNaN(date) ? '' : days[date.getDay()];
+                const imageUrl = note['Link Gambar'] || '';
+                
+                tableHtml += `<tr>
+                    <td>${escapeHtml(note.Tanggal || '')}</td>
+                    <td>${escapeHtml(dayName)}</td>
+                    <td>${escapeHtml(note.Deskripsi || '')}</td>
+                    <td>${imageUrl ? `<img src="${imageUrl}">` : 'Tidak ada'}</td>
+                </tr>`;
+            }
+            tableHtml += `</tbody></table>`;
+            
+            printAreaWrapper.innerHTML = tableHtml;
             window.print();
         }
         
-        // [REVISED] Fungsi ekspor PDF yang lebih cepat dan andal
         async function handleExportPDF() {
             tableModalElements.exportSpinner.classList.remove('hidden');
             const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
 
-            // Ambil semua promise untuk konversi gambar
-            const imagePromises = dailyNotesCache.map(note => getImageAsBase64(note['Link Gambar']));
-            // Tunggu semua gambar selesai di-fetch dan dikonversi
+            const imagePromises = dailyNotesCache.map(note => urlToDataUri(note['Link Gambar']));
             const imagesData = await Promise.all(imagePromises);
 
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const tableBody = dailyNotesCache.map((note, index) => {
                 const date = new Date(note.Tanggal + 'T00:00:00');
                 const dayName = isNaN(date) ? '' : days[date.getDay()];
+                // Di sini kita hanya memasukkan data teks. Gambar akan ditangani oleh didDrawCell
                 return [
                     note.Tanggal || '',
                     dayName,
                     note.Deskripsi || '',
-                    imagesData[index] // Gunakan data base64 yang sudah siap
+                    '' // Placeholder untuk gambar
                 ];
             });
 
@@ -599,7 +608,8 @@
                 },
                 didDrawCell: function(data) {
                     if (data.column.index === 3 && data.cell.section === 'body') {
-                        const base64Image = data.cell.raw;
+                        // Ambil data gambar dari array yang sudah disiapkan, berdasarkan index baris
+                        const base64Image = imagesData[data.row.index];
                         if (base64Image) {
                             try {
                                 const imgProps = doc.getImageProperties(base64Image);
