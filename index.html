@@ -91,28 +91,39 @@
         ::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #818cf8; }
 
-        /* Style untuk Print */
+        /* [MODIFIED] Style untuk Print yang lebih baik */
         @media print {
-            body * {
-                visibility: hidden;
+            body > *:not(#table-modal) {
+                display: none !important;
             }
-            #print-area, #print-area * {
-                visibility: visible;
+            #table-modal, #table-modal > div {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
-            #print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+            #table-modal header, #table-modal .my-4 {
+                display: none !important;
             }
-            #notes-table-print th, #notes-table-print td {
+            #notes-table {
+                font-size: 10pt;
+            }
+            #notes-table th, #notes-table td {
                 border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
+                padding: 5px;
             }
-            #notes-table-print img {
-                max-width: 80px;
-                max-height: 80px;
+            #notes-table img {
+                max-width: 60px !important;
+                max-height: 60px !important;
+            }
+            @page {
+                size: landscape;
+                margin: 20mm;
             }
         }
     </style>
@@ -132,7 +143,6 @@
                     <label for="api-token-input" class="block text-sm font-medium text-slate-700 mb-1">Personal Access Token (PAT)</label>
                     <input type="password" id="api-token-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Masukkan token Anda...">
                 </div>
-                <!-- [MODIFIED] Tata letak tombol diubah -->
                 <div class="flex flex-col-reverse sm:flex-row gap-3">
                     <button id="clear-token-button" class="w-full bg-slate-200 text-slate-800 font-semibold py-3 px-4 rounded-lg hover:bg-slate-300 transition-all-smooth">Hapus Token</button>
                     <button id="auth-button" class="w-full btn-gradient font-semibold py-3 px-4 rounded-lg flex items-center justify-center">
@@ -203,7 +213,6 @@
                     <thead class="bg-slate-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Tanggal</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Hari</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Uraian Kegiatan</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Foto / Dokumentasi</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th></tr></thead>
                     <tbody id="notes-table-body" class="bg-white divide-y divide-slate-200"></tbody>
                 </table>
-                <table id="notes-table-print" class="hidden"></table>
                 <p id="no-notes-msg" class="hidden text-center text-slate-500 py-12"><i data-feather="inbox" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>Belum ada catatan yang dibuat.</p>
             </main>
         </div>
@@ -295,7 +304,6 @@
             exportPdfBtn: document.getElementById('export-pdf-btn'),
             exportWordBtn: document.getElementById('export-word-btn'),
             exportSpinner: document.getElementById('export-spinner'),
-            printTable: document.getElementById('notes-table-print'),
         };
 
         // --- State Aplikasi ---
@@ -314,12 +322,17 @@
             if (!imgElement || !imgElement.complete || imgElement.naturalHeight === 0) {
                 return null;
             }
-            const canvas = document.createElement('canvas');
-            canvas.width = imgElement.naturalWidth;
-            canvas.height = imgElement.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(imgElement, 0, 0);
-            return canvas.toDataURL('image/png');
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = imgElement.naturalWidth;
+                canvas.height = imgElement.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(imgElement, 0, 0);
+                return canvas.toDataURL('image/png');
+            } catch (e) {
+                console.error("Gagal konversi gambar ke Base64:", e);
+                return null;
+            }
         }
 
         function showScreen(screenName) { Object.values(screens).forEach(screen => screen.classList.add('hidden')); if (screens[screenName]) { screens[screenName].classList.remove('hidden'); } headerControls.style.visibility = (screenName === 'dashboard') ? 'visible' : 'hidden'; }
@@ -502,8 +515,9 @@
                 feather.replace();
             }
         }
+        
+        // [MODIFIED] Fungsi print disederhanakan
         function handlePrint() {
-            tableModalElements.printTable.innerHTML = tableModalElements.table.innerHTML;
             window.print();
         }
         
@@ -649,7 +663,6 @@
         // --- Event Listeners ---
         authModal.authButton.addEventListener('click', async () => { const token = authModal.tokenInput.value.trim(); if (!token) return displayNotification('Harap masukkan token Anda.', 'error'); setAuthButtonLoading(true); const user = await verifyTokenAndGetUser(token); setAuthButtonLoading(false); if (user) { toggleAuthModal(false); setTimeout(() => { appContainer.classList.remove('opacity-0'); repoSelectionElements.welcomeText.textContent = `Selamat datang, ${user.login}!`; showScreen('repoSelection'); fetchUserRepos(); }, 400); } });
         
-        // [MODIFIED] Fungsi logout disederhanakan dan dipisahkan dari tombol clear
         function logout() {
             localStorage.clear();
             apiToken = '';
@@ -657,9 +670,9 @@
             repoName = '';
             authModal.tokenInput.value = '';
             appContainer.classList.add('opacity-0');
-            showScreen(''); // Sembunyikan semua layar utama
+            showScreen('');
             setTimeout(() => {
-                toggleAuthModal(true); // Tampilkan kembali modal login
+                toggleAuthModal(true);
             }, 400);
         }
         
@@ -716,7 +729,6 @@
         });
         
         // --- Inisialisasi Aplikasi ---
-        // [FIXED] Logika inisialisasi diperbaiki untuk menangani token yang tidak valid
         async function initializeApp() {
             apiToken = localStorage.getItem('fileManagerToken');
             repoOwner = localStorage.getItem('fileManagerOwner');
@@ -724,9 +736,8 @@
             
             if (apiToken && repoOwner) {
                 try {
-                    // Coba lakukan panggilan API ringan untuk memvalidasi token
                     const user = await callGitHubAPI('user');
-                    repoOwner = user.login; // Perbarui nama owner jika ada perubahan
+                    repoOwner = user.login;
                     localStorage.setItem('fileManagerOwner', user.login);
 
                     appContainer.classList.remove('opacity-0');
@@ -740,7 +751,6 @@
                         fetchUserRepos();
                     }
                 } catch (error) {
-                    // Jika token tidak valid, panggil logout untuk membersihkan dan menampilkan modal login
                     if (error.message.includes('Token tidak valid')) {
                         logout();
                         displayNotification('Sesi Anda telah berakhir, silakan login kembali.', 'error');
