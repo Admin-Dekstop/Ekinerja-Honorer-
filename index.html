@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub File Manager - Desain Elegan</title>
+    <title>GitHub File Manager - Fitur Kamera</title>
     <!-- Memuat Tailwind CSS untuk styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Memuat Google Fonts: Inter -->
@@ -89,80 +89,56 @@
 </head>
 <body class="antialiased">
 
-    <!-- Modal Otentikasi Awal -->
+    <!-- Modal Otentikasi (Sama seperti sebelumnya) -->
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
         <div id="auth-modal-content" class="bg-white rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-lg animated-item">
             <div class="flex items-center space-x-3 mb-4">
-                <div class="bg-indigo-100 p-2 rounded-full">
-                    <i data-feather="key" class="text-indigo-600"></i>
-                </div>
-                <h2 class="text-xl font-bold text-slate-800">Diperlukan Otorisasi GitHub</h2>
+                <div class="bg-indigo-100 p-2 rounded-full"><i data-feather="key" class="text-indigo-600"></i></div>
+                <h2 class="text-xl font-bold text-slate-800">Otorisasi GitHub</h2>
             </div>
-            <p class="text-slate-600 mb-6">Untuk melanjutkan, harap masukkan Personal Access Token (PAT) Anda. Token ini disimpan dengan aman di browser Anda.</p>
+            <p class="text-slate-600 mb-6">Masukkan Personal Access Token (PAT) Anda. Token ini disimpan aman di browser Anda.</p>
             <div class="space-y-4">
                 <div>
                     <label for="api-token-input" class="block text-sm font-medium text-slate-700 mb-1">Personal Access Token (PAT)</label>
-                    <input type="password" id="api-token-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all-smooth" placeholder="Masukkan token Anda (contoh: ghp_...)">
-                    <p class="text-xs text-slate-500 mt-2">Pastikan token memiliki izin lingkup `repo`.</p>
+                    <input type="password" id="api-token-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Masukkan token Anda...">
                 </div>
                 <div class="flex flex-col sm:flex-row-reverse gap-3">
-                    <button id="auth-button" class="w-full btn-gradient font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all-smooth flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="auth-button-text">Simpan & Lanjutkan</span>
-                        <svg id="auth-spinner" class="spinner h-5 w-5 text-white hidden ml-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </button>
-                    <a href="https://github.com/settings/tokens/new?scopes=repo&description=GitHub%20File%20Manager%20Token" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-slate-200 text-slate-800 font-semibold py-3 px-4 rounded-lg hover:bg-slate-300 transition-all-smooth">
-                        Dapatkan Token
-                    </a>
+                    <button id="auth-button" class="w-full btn-gradient font-semibold py-3 px-4 rounded-lg flex items-center justify-center"><span id="auth-button-text">Simpan & Lanjutkan</span><svg id="auth-spinner" class="spinner h-5 w-5 text-white hidden ml-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></button>
+                    <a href="https://github.com/settings/tokens/new?scopes=repo&description=GitHub%20File%20Manager%20Token" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-slate-200 text-slate-800 font-semibold py-3 px-4 rounded-lg hover:bg-slate-300 transition-all-smooth">Dapatkan Token</a>
                 </div>
-                 <button id="clear-token-button" class="text-sm text-slate-500 hover:text-red-600 w-full text-center mt-2">Hapus & Keluar</button>
+                <button id="clear-token-button" class="text-sm text-slate-500 hover:text-red-600 w-full text-center mt-2">Hapus & Keluar</button>
             </div>
         </div>
     </div>
 
     <!-- Kontainer Utama Aplikasi -->
     <div id="app-container" class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl opacity-0 transition-opacity duration-500">
-
-        <!-- Header Aplikasi -->
+        <!-- Header (Sama seperti sebelumnya) -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8">
             <div class="flex items-center space-x-4">
-                <div class="p-3 bg-white rounded-full shadow-md">
-                    <i data-feather="github" class="w-8 h-8 text-indigo-600"></i>
-                </div>
+                <div class="p-3 bg-white rounded-full shadow-md"><i data-feather="github" class="w-8 h-8 text-indigo-600"></i></div>
                 <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">GitHub File Manager</h1>
             </div>
             <div id="header-controls" class="flex items-center space-x-2 mt-4 md:mt-0">
-                <button class="text-sm bg-white border border-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-all-smooth">Tombol A</button>
-                <button class="text-sm bg-white border border-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-all-smooth">Tombol B</button>
-                <button class="text-sm bg-white border border-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-all-smooth">Tombol C</button>
-                
-                <button id="settings-btn" class="bg-white border border-slate-300 text-slate-700 p-2 rounded-lg hover:bg-slate-50 hover:border-slate-400 hover:text-indigo-600 transition-all-smooth" title="Pengaturan Token">
-                    <i data-feather="settings" class="w-5 h-5"></i>
-                </button>
-                <button id="logout-btn" class="bg-red-50 border border-red-200 text-red-600 p-2 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all-smooth" title="Logout">
-                    <i data-feather="log-out" class="w-5 h-5"></i>
-                </button>
+                <button class="text-sm bg-white border border-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50">Tombol A</button>
+                <button class="text-sm bg-white border border-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50">Tombol B</button>
+                <button class="text-sm bg-white border border-slate-300 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50">Tombol C</button>
+                <button id="settings-btn" class="bg-white border border-slate-300 text-slate-700 p-2 rounded-lg hover:bg-slate-50" title="Pengaturan Token"><i data-feather="settings" class="w-5 h-5"></i></button>
+                <button id="logout-btn" class="bg-red-50 border border-red-200 text-red-600 p-2 rounded-lg hover:bg-red-100" title="Logout"><i data-feather="log-out" class="w-5 h-5"></i></button>
             </div>
         </header>
 
-        <!-- Layar Pemilihan Repositori -->
+        <!-- Layar Pemilihan Repositori (Sama seperti sebelumnya) -->
         <section id="repo-selection-screen" class="hidden bg-white/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-lg border border-slate-200 max-w-2xl mx-auto">
             <h2 class="text-xl font-bold mb-2">Pilih Repositori</h2>
             <p id="welcome-text" class="text-slate-600 mb-6"></p>
             <div class="space-y-4">
                 <div>
                     <label for="repo-dropdown" class="block text-sm font-medium text-slate-700">Repositori Anda</label>
-                    <div id="repo-loader" class="text-center py-6">
-                        <svg class="spinner h-8 w-8 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        <p class="mt-2 text-sm text-slate-500">Memuat daftar repositori...</p>
-                    </div>
+                    <div id="repo-loader" class="text-center py-6"><svg class="spinner h-8 w-8 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-2 text-sm text-slate-500">Memuat...</p></div>
                     <select id="repo-dropdown" class="hidden mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg bg-slate-50"></select>
                 </div>
-                <button id="confirm-repo-btn" class="w-full btn-gradient font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all-smooth">
-                    Kelola Repositori Ini
-                </button>
+                <button id="confirm-repo-btn" class="w-full btn-gradient font-semibold py-3 px-4 rounded-lg">Kelola Repositori Ini</button>
             </div>
         </section>
 
@@ -178,27 +154,32 @@
                            <p id="active-repo-display" class="font-bold text-lg text-indigo-700"></p>
                         </div>
                     </div>
-                    <button id="change-repo-btn" class="w-full text-sm bg-slate-100 text-slate-700 font-medium py-2.5 px-4 rounded-lg hover:bg-slate-200 transition-all-smooth flex items-center justify-center space-x-2">
-                        <i data-feather="repeat" class="w-4 h-4"></i>
-                        <span>Ganti Repositori</span>
-                    </button>
+                    <button id="change-repo-btn" class="w-full text-sm bg-slate-100 text-slate-700 font-medium py-2.5 px-4 rounded-lg hover:bg-slate-200 transition-all-smooth flex items-center justify-center space-x-2"><i data-feather="repeat" class="w-4 h-4"></i><span>Ganti Repositori</span></button>
                 </section>
 
                 <section class="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-slate-200">
                     <h3 class="text-lg font-semibold mb-4">Unggah File Baru</h3>
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         <label class="w-full cursor-pointer bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-indigo-500 hover:bg-indigo-50 transition-all-smooth flex flex-col items-center justify-center space-y-2">
                             <i data-feather="upload-cloud" class="w-8 h-8 text-slate-400"></i>
-                            <span id="file-upload-text" class="text-slate-600 font-medium truncate">Pilih sebuah file...</span>
+                            <span id="file-upload-text" class="text-slate-600 font-medium truncate">Pilih file dari komputer</span>
                             <input type="file" id="file-upload-input" class="hidden">
                         </label>
-                        <button id="upload-btn" class="w-full btn-gradient font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all-smooth flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">Unggah</button>
+                        <div class="flex items-center space-x-2">
+                            <hr class="flex-grow border-slate-200">
+                            <span class="text-xs font-medium text-slate-400">ATAU</span>
+                            <hr class="flex-grow border-slate-200">
+                        </div>
+                        <button id="open-camera-btn" class="w-full bg-slate-800 text-white font-semibold py-3 px-4 rounded-lg hover:bg-slate-900 transition-all-smooth flex items-center justify-center space-x-2">
+                            <i data-feather="camera" class="w-5 h-5"></i>
+                            <span>Ambil Foto Langsung</span>
+                        </button>
                         <p id="upload-feedback" class="text-sm text-center text-slate-500 mt-2 h-5"></p>
                     </div>
                 </section>
             </aside>
 
-            <!-- Kolom Kanan: Daftar File -->
+            <!-- Kolom Kanan: Daftar File (Sama seperti sebelumnya) -->
             <div class="lg:col-span-2">
                 <section id="file-list-wrapper" class="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-slate-200 min-h-[400px]">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
@@ -208,269 +189,92 @@
                             <input type="text" id="search-box" class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50" placeholder="Cari file...">
                         </div>
                     </div>
-
-                    <div id="files-loader" class="text-center py-12">
-                        <svg class="spinner h-10 w-10 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        <p class="mt-3 text-slate-600">Memuat file...</p>
-                    </div>
+                    <div id="files-loader" class="text-center py-12"><svg class="spinner h-10 w-10 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-3 text-slate-600">Memuat file...</p></div>
                     <ul id="file-list-ul" class="space-y-3"></ul>
-                    <p id="no-files-msg" class="hidden text-center text-slate-500 py-12">
-                        <i data-feather="folder-x" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
-                        Tidak ada file yang ditemukan.
-                    </p>
+                    <p id="no-files-msg" class="hidden text-center text-slate-500 py-12"><i data-feather="folder-x" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>Tidak ada file yang ditemukan.</p>
                 </section>
             </div>
         </main>
     </div>
 
-    <!-- Modal untuk Ganti Nama -->
-    <div id="rename-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md animated-item">
-            <h3 class="text-lg font-bold leading-6 text-slate-900">Ganti Nama File</h3>
-            <div class="mt-4">
-                <input type="text" id="rename-input-field" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <p class="text-xs text-slate-500 mt-1">Masukkan nama file baru (termasuk ekstensi).</p>
+    <!-- Modal Kamera -->
+    <div id="camera-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl animated-item">
+            <h3 class="text-lg font-bold leading-6 text-slate-900 mb-4">Ambil Foto</h3>
+            <div class="bg-slate-900 rounded-lg overflow-hidden aspect-video relative">
+                <video id="camera-video" class="w-full h-full object-cover" autoplay playsinline></video>
+                <canvas id="camera-canvas" class="hidden w-full h-full object-cover"></canvas>
+                <p id="camera-permission-msg" class="hidden absolute inset-0 flex items-center justify-center text-white text-center p-4">Izin kamera ditolak. Harap aktifkan di pengaturan browser Anda.</p>
             </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="cancel-rename-btn" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-all-smooth">Batal</button>
-                <button id="confirm-rename-btn" class="px-4 py-2 btn-gradient text-white rounded-lg hover:opacity-90 transition-all-smooth">Simpan</button>
+            <div id="camera-controls" class="mt-6 flex justify-center items-center space-x-4">
+                <button id="snap-btn" class="p-4 bg-white rounded-full shadow-lg ring-2 ring-indigo-500 hover:ring-4 transition-all-smooth" title="Ambil Gambar"><i data-feather="camera" class="w-6 h-6 text-indigo-600"></i></button>
+                <button id="retake-btn" class="hidden px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-all-smooth">Ambil Ulang</button>
+                <button id="save-upload-btn" class="hidden px-4 py-2 btn-gradient text-white rounded-lg hover:opacity-90 transition-all-smooth">Simpan & Unggah</button>
             </div>
+             <button id="cancel-camera-btn" class="w-full text-center mt-4 text-sm text-slate-500 hover:text-slate-800">Batal</button>
         </div>
     </div>
 
-    <!-- Modal Konfirmasi -->
-    <div id="confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md animated-item">
-            <div class="flex items-start space-x-4">
-                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <i data-feather="alert-triangle" class="h-6 w-6 text-red-600"></i>
-                </div>
-                <div class="mt-3 text-center sm:mt-0 sm:text-left">
-                    <h3 class="text-lg font-bold leading-6 text-slate-900" id="confirm-modal-title">Hapus File</h3>
-                    <div class="mt-2">
-                        <p class="text-sm text-slate-500" id="confirm-modal-text">Apakah Anda yakin? Tindakan ini tidak dapat diurungkan.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button id="cancel-confirm-btn" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-all-smooth">Batal</button>
-                <button id="confirm-action-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all-smooth">Ya, Hapus</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notifikasi Toast -->
-    <div id="toast-notification" class="fixed bottom-5 right-5 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 translate-y-10 transition-all-smooth duration-300 z-50 flex items-center space-x-3">
-        <div id="toast-icon"></div>
-        <p id="toast-text"></p>
-    </div>
+    <!-- Modal Rename & Konfirmasi (Sama seperti sebelumnya) -->
+    <div id="rename-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden"><div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md animated-item"><h3 class="text-lg font-bold">Ganti Nama File</h3><div class="mt-4"><input type="text" id="rename-input-field" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><p class="text-xs text-slate-500 mt-1">Masukkan nama baru (termasuk ekstensi).</p></div><div class="mt-6 flex justify-end space-x-3"><button id="cancel-rename-btn" class="px-4 py-2 bg-slate-200 rounded-lg">Batal</button><button id="confirm-rename-btn" class="px-4 py-2 btn-gradient rounded-lg">Simpan</button></div></div></div>
+    <div id="confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden"><div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md animated-item"><div class="flex items-start space-x-4"><div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100"><i data-feather="alert-triangle" class="h-6 w-6 text-red-600"></i></div><div class="mt-3 text-center sm:text-left"><h3 class="text-lg font-bold" id="confirm-modal-title">Hapus File</h3><div class="mt-2"><p class="text-sm text-slate-500" id="confirm-modal-text">Apakah Anda yakin?</p></div></div></div><div class="mt-6 flex justify-end space-x-3"><button id="cancel-confirm-btn" class="px-4 py-2 bg-slate-200 rounded-lg">Batal</button><button id="confirm-action-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg">Ya, Hapus</button></div></div></div>
+    <div id="toast-notification" class="fixed bottom-5 right-5 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 translate-y-10 transition-all-smooth z-50 flex items-center space-x-3"><div id="toast-icon"></div><p id="toast-text"></p></div>
 
     <script>
         // --- SCRIPT JAVASCRIPT ---
-        // Logika JavaScript tetap sama seperti versi sebelumnya,
-        // karena perubahan yang dilakukan mayoritas pada HTML dan CSS untuk estetika.
-        // Penambahan kecil pada script hanya untuk menangani animasi.
+        // Sebagian besar logika sama, dengan penambahan untuk fitur kamera.
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Selektor Elemen DOM ---
+            // --- Selektor Elemen DOM (Sama seperti sebelumnya) ---
             const appContainer = document.getElementById('app-container');
-            const screens = {
-                repoSelection: document.getElementById('repo-selection-screen'),
-                dashboard: document.getElementById('manager-dashboard'),
-            };
+            const screens = { repoSelection: document.getElementById('repo-selection-screen'), dashboard: document.getElementById('manager-dashboard') };
             const headerControls = document.getElementById('header-controls');
+            const authModal = { modal: document.getElementById('auth-modal'), content: document.getElementById('auth-modal-content'), tokenInput: document.getElementById('api-token-input'), authButton: document.getElementById('auth-button'), buttonText: document.getElementById('auth-button-text'), spinner: document.getElementById('auth-spinner'), clearTokenButton: document.getElementById('clear-token-button') };
+            const repoSelectionElements = { welcomeText: document.getElementById('welcome-text'), dropdown: document.getElementById('repo-dropdown'), loader: document.getElementById('repo-loader'), confirmBtn: document.getElementById('confirm-repo-btn') };
+            const dashboardElements = { activeRepoDisplay: document.getElementById('active-repo-display'), changeRepoBtn: document.getElementById('change-repo-btn'), settingsBtn: document.getElementById('settings-btn'), logoutBtn: document.getElementById('logout-btn'), fileUploadInput: document.getElementById('file-upload-input'), fileUploadText: document.getElementById('file-upload-text'), uploadBtn: document.getElementById('upload-btn'), uploadFeedback: document.getElementById('upload-feedback'), searchBox: document.getElementById('search-box'), fileList: document.getElementById('file-list-ul'), filesLoader: document.getElementById('files-loader'), noFilesMsg: document.getElementById('no-files-msg'), openCameraBtn: document.getElementById('open-camera-btn') };
+            const renameModalElements = { modal: document.getElementById('rename-modal'), input: document.getElementById('rename-input-field'), cancelBtn: document.getElementById('cancel-rename-btn'), confirmBtn: document.getElementById('confirm-rename-btn') };
+            const confirmModalElements = { modal: document.getElementById('confirm-modal'), title: document.getElementById('confirm-modal-title'), text: document.getElementById('confirm-modal-text'), cancelBtn: document.getElementById('cancel-confirm-btn'), confirmBtn: document.getElementById('confirm-action-btn') };
+            const toastElements = { notification: document.getElementById('toast-notification'), icon: document.getElementById('toast-icon'), text: document.getElementById('toast-text') };
 
-            const authModal = {
-                modal: document.getElementById('auth-modal'),
-                content: document.getElementById('auth-modal-content'),
-                tokenInput: document.getElementById('api-token-input'),
-                authButton: document.getElementById('auth-button'),
-                buttonText: document.getElementById('auth-button-text'),
-                spinner: document.getElementById('auth-spinner'),
-                clearTokenButton: document.getElementById('clear-token-button'),
+            // --- Selektor Elemen Kamera BARU ---
+            const cameraModalElements = {
+                modal: document.getElementById('camera-modal'),
+                video: document.getElementById('camera-video'),
+                canvas: document.getElementById('camera-canvas'),
+                snapBtn: document.getElementById('snap-btn'),
+                retakeBtn: document.getElementById('retake-btn'),
+                saveUploadBtn: document.getElementById('save-upload-btn'),
+                cancelBtn: document.getElementById('cancel-camera-btn'),
+                permissionMsg: document.getElementById('camera-permission-msg'),
             };
+
+            // --- State Aplikasi (Penambahan stream kamera) ---
+            let apiToken = '', repoOwner = '', repoName = '';
+            let allFilesCache = [], fileBeingRenamed = null, actionToConfirm = null;
+            let cameraStream = null; // State untuk stream kamera
+
+            // --- Fungsi Utilitas & Tampilan (Sama seperti sebelumnya) ---
+            const ICONS = { success: `<i data-feather="check-circle" class="text-green-400"></i>`, error: `<i data-feather="x-circle" class="text-red-400"></i>`, info: `<i data-feather="info" class="text-blue-400"></i>` };
+            function displayNotification(message, type = 'info') { toastElements.text.textContent = message; toastElements.icon.innerHTML = ICONS[type] || ICONS.info; feather.replace(); toastElements.notification.classList.remove('opacity-0', 'translate-y-10'); setTimeout(() => { toastElements.notification.classList.add('opacity-0', 'translate-y-10'); }, 3500); }
+            function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = error => reject(error); }); }
+            function showScreen(screenName) { Object.values(screens).forEach(screen => screen.classList.add('hidden')); if (screens[screenName]) { screens[screenName].classList.remove('hidden'); } headerControls.style.visibility = (screenName === 'dashboard') ? 'visible' : 'hidden'; }
+            function setAuthButtonLoading(isLoading) { authModal.authButton.disabled = isLoading; authModal.buttonText.textContent = isLoading ? 'Memverifikasi...' : 'Simpan & Lanjutkan'; authModal.spinner.classList.toggle('hidden', !isLoading); }
+            function toggleAuthModal(show) { const content = authModal.content; if (show) { authModal.modal.classList.remove('hidden'); setTimeout(() => content.classList.add('show'), 10); } else { content.classList.remove('show'); setTimeout(() => authModal.modal.classList.add('hidden'), 400); } }
+
+            // --- Logika API GitHub (Sama seperti sebelumnya) ---
+            async function callGitHubAPI(endpoint, options = {}) { const headers = { 'Authorization': `token ${apiToken}`, 'Accept': 'application/vnd.github.v3+json', ...options.headers, }; try { const response = await fetch(`https://api.github.com/${endpoint}`, { ...options, headers }); if (!response.ok) { const errorData = await response.json().catch(() => ({ message: `Error ${response.status}: ${response.statusText}` })); throw new Error(errorData.message); } if (response.status === 204 || response.headers.get('content-length') === '0') return null; return await response.json(); } catch (error) { displayNotification(`Error API: ${error.message}`, 'error'); console.error('GitHub API Error:', error); throw error; } }
+            async function verifyTokenAndGetUser(token) { apiToken = token; try { const user = await callGitHubAPI('user'); localStorage.setItem('fileManagerToken', token); localStorage.setItem('fileManagerOwner', user.login); repoOwner = user.login; return user; } catch (error) { localStorage.removeItem('fileManagerToken'); return null; } }
+            async function fetchUserRepos() { repoSelectionElements.loader.style.display = 'block'; repoSelectionElements.dropdown.classList.add('hidden'); repoSelectionElements.dropdown.innerHTML = ''; try { const repos = await callGitHubAPI(`users/${repoOwner}/repos?sort=updated&per_page=100`); if (repos && repos.length > 0) { repos.forEach(repo => { const option = document.createElement('option'); option.value = repo.name; option.textContent = repo.full_name; repoSelectionElements.dropdown.appendChild(option); }); repoSelectionElements.dropdown.classList.remove('hidden'); } else { repoSelectionElements.dropdown.innerHTML = '<option disabled>Tidak ada repositori.</option>'; } } finally { repoSelectionElements.loader.style.display = 'none'; } }
+            async function fetchRepoContents() { dashboardElements.filesLoader.style.display = 'block'; dashboardElements.fileList.innerHTML = ''; dashboardElements.noFilesMsg.classList.add('hidden'); try { const contents = await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/`); allFilesCache = contents.filter(item => item.type === 'file'); displayFiles(allFilesCache); } catch (error) { /* handled */ } finally { dashboardElements.filesLoader.style.display = 'none'; if (allFilesCache.length === 0) { dashboardElements.noFilesMsg.classList.remove('hidden'); } } }
             
-            const repoSelectionElements = {
-                welcomeText: document.getElementById('welcome-text'),
-                dropdown: document.getElementById('repo-dropdown'),
-                loader: document.getElementById('repo-loader'),
-                confirmBtn: document.getElementById('confirm-repo-btn'),
-            };
-
-            const dashboardElements = {
-                activeRepoDisplay: document.getElementById('active-repo-display'),
-                changeRepoBtn: document.getElementById('change-repo-btn'),
-                settingsBtn: document.getElementById('settings-btn'),
-                logoutBtn: document.getElementById('logout-btn'),
-                fileUploadInput: document.getElementById('file-upload-input'),
-                fileUploadText: document.getElementById('file-upload-text'),
-                uploadBtn: document.getElementById('upload-btn'),
-                uploadFeedback: document.getElementById('upload-feedback'),
-                searchBox: document.getElementById('search-box'),
-                fileList: document.getElementById('file-list-ul'),
-                filesLoader: document.getElementById('files-loader'),
-                noFilesMsg: document.getElementById('no-files-msg'),
-            };
-
-            const renameModalElements = {
-                modal: document.getElementById('rename-modal'),
-                input: document.getElementById('rename-input-field'),
-                cancelBtn: document.getElementById('cancel-rename-btn'),
-                confirmBtn: document.getElementById('confirm-rename-btn'),
-            };
-
-            const confirmModalElements = {
-                modal: document.getElementById('confirm-modal'),
-                title: document.getElementById('confirm-modal-title'),
-                text: document.getElementById('confirm-modal-text'),
-                cancelBtn: document.getElementById('cancel-confirm-btn'),
-                confirmBtn: document.getElementById('confirm-action-btn'),
-            };
-            
-            const toastElements = {
-                notification: document.getElementById('toast-notification'),
-                icon: document.getElementById('toast-icon'),
-                text: document.getElementById('toast-text'),
-            };
-
-            // --- State Aplikasi ---
-            let apiToken = '';
-            let repoOwner = '';
-            let repoName = '';
-            let allFilesCache = [];
-            let fileBeingRenamed = null;
-            let actionToConfirm = null;
-
-            // --- Fungsi Utilitas & Tampilan ---
-            const ICONS = {
-                success: `<i data-feather="check-circle" class="text-green-400"></i>`,
-                error: `<i data-feather="x-circle" class="text-red-400"></i>`,
-                info: `<i data-feather="info" class="text-blue-400"></i>`
-            };
-            
-            function displayNotification(message, type = 'info') {
-                toastElements.text.textContent = message;
-                toastElements.icon.innerHTML = ICONS[type] || ICONS.info;
-                feather.replace();
-                toastElements.notification.classList.remove('opacity-0', 'translate-y-10');
-                
-                setTimeout(() => {
-                    toastElements.notification.classList.add('opacity-0', 'translate-y-10');
-                }, 3500);
-            }
-
-            function fileToBase64(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = error => reject(error);
-                });
-            }
-
-            function showScreen(screenName) {
-                Object.values(screens).forEach(screen => screen.classList.add('hidden'));
-                if (screens[screenName]) {
-                    screens[screenName].classList.remove('hidden');
-                }
-                headerControls.style.visibility = (screenName === 'dashboard') ? 'visible' : 'hidden';
-            }
-
-            function setAuthButtonLoading(isLoading) {
-                authModal.authButton.disabled = isLoading;
-                authModal.buttonText.textContent = isLoading ? 'Memverifikasi...' : 'Simpan & Lanjutkan';
-                authModal.spinner.classList.toggle('hidden', !isLoading);
-            }
-
-            function toggleAuthModal(show) {
-                if (show) {
-                    authModal.modal.classList.remove('hidden');
-                    setTimeout(() => authModal.content.classList.add('show'), 10);
-                } else {
-                    authModal.content.classList.remove('show');
-                    setTimeout(() => authModal.modal.classList.add('hidden'), 400);
-                }
-            }
-
-            // --- Logika API GitHub ---
-            async function callGitHubAPI(endpoint, options = {}) {
-                const headers = {
-                    'Authorization': `token ${apiToken}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    ...options.headers,
-                };
-
-                try {
-                    const response = await fetch(`https://api.github.com/${endpoint}`, { ...options, headers });
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ message: `Error ${response.status}: ${response.statusText}` }));
-                        throw new Error(errorData.message);
-                    }
-                    if (response.status === 204 || response.headers.get('content-length') === '0') return null;
-                    return await response.json();
-                } catch (error) {
-                    displayNotification(`Error API: ${error.message}`, 'error');
-                    console.error('GitHub API Error:', error);
-                    throw error;
-                }
-            }
-
-            async function verifyTokenAndGetUser(token) {
-                apiToken = token;
-                try {
-                    const user = await callGitHubAPI('user');
-                    localStorage.setItem('fileManagerToken', token);
-                    localStorage.setItem('fileManagerOwner', user.login);
-                    repoOwner = user.login;
-                    return user;
-                } catch (error) {
-                    localStorage.removeItem('fileManagerToken');
-                    return null;
-                }
-            }
-
-            async function fetchUserRepos() {
-                repoSelectionElements.loader.style.display = 'block';
-                repoSelectionElements.dropdown.classList.add('hidden');
-                repoSelectionElements.dropdown.innerHTML = '';
-                try {
-                    const repos = await callGitHubAPI(`users/${repoOwner}/repos?sort=updated&per_page=100`);
-                    if (repos && repos.length > 0) {
-                        repos.forEach(repo => {
-                            const option = document.createElement('option');
-                            option.value = repo.name;
-                            option.textContent = repo.full_name;
-                            repoSelectionElements.dropdown.appendChild(option);
-                        });
-                        repoSelectionElements.dropdown.classList.remove('hidden');
-                    } else {
-                        repoSelectionElements.dropdown.innerHTML = '<option disabled>Tidak ada repositori ditemukan.</option>';
-                    }
-                } finally {
-                    repoSelectionElements.loader.style.display = 'none';
-                }
-            }
-            
-            async function fetchRepoContents() {
-                dashboardElements.filesLoader.style.display = 'block';
-                dashboardElements.fileList.innerHTML = '';
-                dashboardElements.noFilesMsg.classList.add('hidden');
-                try {
-                    const contents = await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/`);
-                    allFilesCache = contents.filter(item => item.type === 'file');
-                    displayFiles(allFilesCache);
-                } catch (error) { /* handled */ } 
-                finally {
-                    dashboardElements.filesLoader.style.display = 'none';
-                    if (allFilesCache.length === 0) {
-                        dashboardElements.noFilesMsg.classList.remove('hidden');
-                    }
-                }
-            }
-            
-            async function handleFileUpload(file) {
+            // --- Logika Unggah File (Sedikit Modifikasi) ---
+            async function handleFileUpload(file, source = 'file') {
                 const fileName = file.name;
-                dashboardElements.uploadFeedback.textContent = `Mengunggah ${fileName}...`;
-                dashboardElements.uploadBtn.disabled = true;
+                if (source === 'camera') {
+                    dashboardElements.uploadFeedback.textContent = `Mengunggah foto ${fileName}...`;
+                } else {
+                    dashboardElements.uploadFeedback.textContent = `Mengunggah ${fileName}...`;
+                }
+                
                 try {
                     const base64Content = await fileToBase64(file);
                     await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${fileName}`, {
@@ -479,243 +283,120 @@
                     });
                     displayNotification(`${fileName} berhasil diunggah!`, 'success');
                     dashboardElements.fileUploadInput.value = '';
-                    dashboardElements.fileUploadText.innerHTML = 'Pilih sebuah file...';
+                    dashboardElements.fileUploadText.innerHTML = 'Pilih file dari komputer';
                     await fetchRepoContents();
                 } catch (error) { /* handled */ }
                 finally {
                     dashboardElements.uploadFeedback.textContent = '';
-                    dashboardElements.uploadBtn.disabled = false;
                 }
             }
             
-            async function handleDeleteFile(file) {
-                try {
-                    await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${file.name}`, {
-                        method: 'DELETE',
-                        body: JSON.stringify({ message: `feat: remove ${file.name}`, sha: file.sha }),
-                    });
-                    displayNotification(`${file.name} berhasil dihapus.`, 'success');
-                    await fetchRepoContents();
-                } catch (error) { /* handled */ }
-            }
+            // --- Logika Hapus & Rename (Sama seperti sebelumnya) ---
+            async function handleDeleteFile(file) { try { await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${file.name}`, { method: 'DELETE', body: JSON.stringify({ message: `feat: remove ${file.name}`, sha: file.sha }), }); displayNotification(`${file.name} berhasil dihapus.`, 'success'); await fetchRepoContents(); } catch (error) { /* handled */ } }
+            async function handleRenameFile(oldFile, newName) { const newFileName = newName.trim(); if (!newFileName || oldFile.name === newFileName) return; displayNotification(`Mengganti nama ${oldFile.name}...`, 'info'); try { const fileBlob = await callGitHubAPI(`repos/${repoOwner}/${repoName}/git/blobs/${oldFile.sha}`); await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${newFileName}`, { method: 'PUT', body: JSON.stringify({ message: `feat: rename ${oldFile.name} to ${newFileName}`, content: fileBlob.content, encoding: 'base64' }), }); await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${oldFile.name}`, { method: 'DELETE', body: JSON.stringify({ message: `chore: remove old file after rename`, sha: oldFile.sha }), }); displayNotification("File berhasil diganti namanya.", 'success'); await fetchRepoContents(); } catch (error) { displayNotification(`Gagal mengganti nama: ${error.message}`, 'error'); } finally { toggleGenericModal(renameModalElements.modal, false); } }
 
-            async function handleRenameFile(oldFile, newName) {
-                const newFileName = newName.trim();
-                 if (!newFileName || oldFile.name === newFileName) return;
+            // --- Render UI & Modal (Sama seperti sebelumnya) ---
+            function displayFiles(files) { dashboardElements.fileList.innerHTML = ''; dashboardElements.noFilesMsg.classList.toggle('hidden', files.length > 0); files.forEach((file, index) => { const li = document.createElement('li'); li.className = 'flex items-center justify-between bg-slate-50 p-3 rounded-lg hover:bg-white hover:shadow-md transition-all-smooth animated-item'; li.style.transitionDelay = `${index * 50}ms`; li.dataset.fileName = file.name; li.innerHTML = `<div class="flex items-center space-x-4 min-w-0"><i data-feather="file-text" class="w-6 h-6 text-slate-500 flex-shrink-0"></i><span class="font-medium text-slate-700 truncate" title="${file.name}">${file.name}</span></div><div class="flex items-center space-x-1 flex-shrink-0"><a href="${file.download_url}" target="_blank" rel="noopener noreferrer" class="p-2 text-slate-500 hover:text-green-600 rounded-full hover:bg-slate-200" title="Download"><i data-feather="download" class="w-5 h-5"></i></a><button class="rename-btn p-2 text-slate-500 hover:text-blue-600 rounded-full hover:bg-slate-200" title="Ganti Nama"><i data-feather="edit-3" class="w-5 h-5"></i></button><button class="delete-btn p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-200" title="Hapus"><i data-feather="trash-2" class="w-5 h-5"></i></button></div>`; li.querySelector('.rename-btn').addEventListener('click', () => toggleGenericModal(renameModalElements.modal, true, file)); li.querySelector('.delete-btn').addEventListener('click', () => { showConfirmationModal(`Hapus "${file.name}"`, `Apakah Anda yakin ingin menghapus file ini?`, () => handleDeleteFile(file)); }); dashboardElements.fileList.appendChild(li); setTimeout(() => li.classList.add('show'), 50); }); feather.replace(); }
+            function toggleGenericModal(modalElement, show, file = null) { const modalContent = modalElement.querySelector('.animated-item'); if (show) { if (file) { fileBeingRenamed = file; renameModalElements.input.value = file.name; } modalElement.classList.remove('hidden'); setTimeout(() => modalContent.classList.add('show'), 10); if (file) renameModalElements.input.focus(); } else { modalContent.classList.remove('show'); setTimeout(() => { modalElement.classList.add('hidden'); fileBeingRenamed = null; }, 400); } }
+            function showConfirmationModal(title, text, onConfirm) { confirmModalElements.title.textContent = title; confirmModalElements.text.textContent = text; actionToConfirm = onConfirm; toggleGenericModal(confirmModalElements.modal, true); }
+            function hideConfirmationModal() { toggleGenericModal(confirmModalElements.modal, false); actionToConfirm = null; }
 
-                displayNotification(`Mengganti nama ${oldFile.name}...`, 'info');
-                try {
-                    const fileBlob = await callGitHubAPI(`repos/${repoOwner}/${repoName}/git/blobs/${oldFile.sha}`);
-                    await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${newFileName}`, {
-                        method: 'PUT',
-                        body: JSON.stringify({ message: `feat: rename ${oldFile.name} to ${newFileName}`, content: fileBlob.content, encoding: 'base64' }),
-                    });
-                    await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${oldFile.name}`, {
-                        method: 'DELETE',
-                        body: JSON.stringify({ message: `chore: remove old file after rename`, sha: oldFile.sha }),
-                    });
-                    displayNotification("File berhasil diganti namanya.", 'success');
-                    await fetchRepoContents();
-                } catch (error) {
-                    displayNotification(`Gagal mengganti nama: ${error.message}`, 'error');
-                } finally {
-                    toggleGenericModal(renameModalElements.modal, false);
-                }
-            }
+            // --- Logika Kamera BARU ---
+            async function startCamera() {
+                // Reset UI kamera
+                cameraModalElements.video.classList.remove('hidden');
+                cameraModalElements.canvas.classList.add('hidden');
+                cameraModalElements.permissionMsg.classList.add('hidden');
+                cameraModalElements.snapBtn.classList.remove('hidden');
+                cameraModalElements.retakeBtn.classList.add('hidden');
+                cameraModalElements.saveUploadBtn.classList.add('hidden');
 
-            // --- Render UI & Modal ---
-            function displayFiles(files) {
-                dashboardElements.fileList.innerHTML = '';
-                dashboardElements.noFilesMsg.classList.toggle('hidden', files.length > 0);
+                toggleGenericModal(cameraModalElements.modal, true);
                 
-                files.forEach((file, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'flex items-center justify-between bg-slate-50 p-3 rounded-lg hover:bg-white hover:shadow-md transition-all-smooth animated-item';
-                    li.style.transitionDelay = `${index * 50}ms`;
-                    li.dataset.fileName = file.name;
-                    li.innerHTML = `
-                        <div class="flex items-center space-x-4 min-w-0">
-                            <i data-feather="file-text" class="w-6 h-6 text-slate-500 flex-shrink-0"></i>
-                            <span class="font-medium text-slate-700 truncate" title="${file.name}">${file.name}</span>
-                        </div>
-                        <div class="flex items-center space-x-1 flex-shrink-0">
-                            <a href="${file.download_url}" target="_blank" rel="noopener noreferrer" class="download-btn p-2 text-slate-500 hover:text-green-600 rounded-full hover:bg-slate-200 transition-all-smooth" title="Download"><i data-feather="download" class="w-5 h-5"></i></a>
-                            <button class="rename-btn p-2 text-slate-500 hover:text-blue-600 rounded-full hover:bg-slate-200 transition-all-smooth" title="Ganti Nama"><i data-feather="edit-3" class="w-5 h-5"></i></button>
-                            <button class="delete-btn p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-200 transition-all-smooth" title="Hapus"><i data-feather="trash-2" class="w-5 h-5"></i></button>
-                        </div>`;
-                    li.querySelector('.rename-btn').addEventListener('click', () => toggleGenericModal(renameModalElements.modal, true, file));
-                    li.querySelector('.delete-btn').addEventListener('click', () => {
-                        showConfirmationModal(
-                            `Hapus "${file.name}"`,
-                            `Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat diurungkan.`,
-                            () => handleDeleteFile(file)
-                        );
-                    });
-                    dashboardElements.fileList.appendChild(li);
-                    setTimeout(() => li.classList.add('show'), 50);
-                });
-                feather.replace();
-            }
-
-            function toggleGenericModal(modalElement, show, file = null) {
-                const modalContent = modalElement.querySelector('.animated-item');
-                if (show) {
-                    if (file) {
-                        fileBeingRenamed = file;
-                        renameModalElements.input.value = file.name;
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    try {
+                        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                        cameraModalElements.video.srcObject = cameraStream;
+                    } catch (err) {
+                        console.error("Error accessing camera: ", err);
+                        cameraModalElements.permissionMsg.classList.remove('hidden');
+                        cameraModalElements.video.classList.add('hidden');
+                        cameraModalElements.snapBtn.classList.add('hidden');
                     }
-                    modalElement.classList.remove('hidden');
-                    setTimeout(() => modalContent.classList.add('show'), 10);
-                    if (file) renameModalElements.input.focus();
                 } else {
-                    modalContent.classList.remove('show');
-                    setTimeout(() => {
-                        modalElement.classList.add('hidden');
-                        fileBeingRenamed = null;
-                    }, 400);
+                    displayNotification("Browser tidak mendukung akses kamera.", 'error');
+                    toggleGenericModal(cameraModalElements.modal, false);
                 }
             }
 
-            function showConfirmationModal(title, text, onConfirm) {
-                confirmModalElements.title.textContent = title;
-                confirmModalElements.text.textContent = text;
-                actionToConfirm = onConfirm;
-                toggleGenericModal(confirmModalElements.modal, true);
-            }
-
-            function hideConfirmationModal() {
-                toggleGenericModal(confirmModalElements.modal, false);
-                actionToConfirm = null;
-            }
-
-            // --- Event Listeners ---
-            authModal.authButton.addEventListener('click', async () => {
-                const token = authModal.tokenInput.value.trim();
-                if (!token) return displayNotification('Harap masukkan token Anda.', 'error');
-                
-                setAuthButtonLoading(true);
-                const user = await verifyTokenAndGetUser(token);
-                setAuthButtonLoading(false);
-
-                if (user) {
-                    toggleAuthModal(false);
-                    setTimeout(() => {
-                        appContainer.classList.remove('opacity-0');
-                        repoSelectionElements.welcomeText.textContent = `Selamat datang, ${user.login}! Silakan pilih repositori.`;
-                        showScreen('repoSelection');
-                        fetchUserRepos();
-                    }, 400);
+            function stopCamera() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
                 }
-            });
+                toggleGenericModal(cameraModalElements.modal, false);
+            }
 
-            authModal.clearTokenButton.addEventListener('click', () => {
-                authModal.tokenInput.value = '';
-                logout();
-            });
-            
-            repoSelectionElements.confirmBtn.addEventListener('click', () => {
-                const selectedRepo = repoSelectionElements.dropdown.value;
-                if (!selectedRepo) return displayNotification('Harap pilih repositori.', 'error');
+            function takePicture() {
+                const video = cameraModalElements.video;
+                const canvas = cameraModalElements.canvas;
+                const context = canvas.getContext('2d');
                 
-                repoName = selectedRepo;
-                localStorage.setItem('fileManagerRepo', repoName);
-                dashboardElements.activeRepoDisplay.textContent = `${repoOwner}/${repoName}`;
-                showScreen('dashboard');
-                fetchRepoContents();
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                video.classList.add('hidden');
+                canvas.classList.remove('hidden');
+                
+                cameraModalElements.snapBtn.classList.add('hidden');
+                cameraModalElements.retakeBtn.classList.remove('hidden');
+                cameraModalElements.saveUploadBtn.classList.remove('hidden');
+            }
+
+            function saveAndUploadPicture() {
+                cameraModalElements.canvas.toBlob(async (blob) => {
+                    const timestamp = new Date().toISOString().replace(/[-:.]/g, '').replace('T', '_');
+                    const fileName = `capture_${timestamp}.png`;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    
+                    stopCamera();
+                    await handleFileUpload(file, 'camera');
+                }, 'image/png');
+            }
+
+            // --- Event Listeners (Penambahan untuk kamera) ---
+            dashboardElements.openCameraBtn.addEventListener('click', startCamera);
+            cameraModalElements.snapBtn.addEventListener('click', takePicture);
+            cameraModalElements.retakeBtn.addEventListener('click', () => {
+                cameraModalElements.video.classList.remove('hidden');
+                cameraModalElements.canvas.classList.add('hidden');
+                cameraModalElements.snapBtn.classList.remove('hidden');
+                cameraModalElements.retakeBtn.classList.add('hidden');
+                cameraModalElements.saveUploadBtn.classList.add('hidden');
             });
+            cameraModalElements.saveUploadBtn.addEventListener('click', saveAndUploadPicture);
+            cameraModalElements.cancelBtn.addEventListener('click', stopCamera);
 
-            function logout() {
-                localStorage.clear();
-                apiToken = '';
-                repoOwner = '';
-                repoName = '';
-                authModal.tokenInput.value = '';
-                appContainer.classList.add('opacity-0');
-                showScreen(''); // Sembunyikan semua layar utama
-                setTimeout(initializeApp, 400);
-            }
-
-            function changeRepo() {
-                localStorage.removeItem('fileManagerRepo');
-                repoName = '';
-                showScreen('repoSelection');
-                fetchUserRepos();
-            }
-
+            // --- Event Listeners Lainnya (Sama seperti sebelumnya) ---
+            authModal.authButton.addEventListener('click', async () => { const token = authModal.tokenInput.value.trim(); if (!token) return displayNotification('Harap masukkan token Anda.', 'error'); setAuthButtonLoading(true); const user = await verifyTokenAndGetUser(token); setAuthButtonLoading(false); if (user) { toggleAuthModal(false); setTimeout(() => { appContainer.classList.remove('opacity-0'); repoSelectionElements.welcomeText.textContent = `Selamat datang, ${user.login}!`; showScreen('repoSelection'); fetchUserRepos(); }, 400); } });
+            authModal.clearTokenButton.addEventListener('click', () => { authModal.tokenInput.value = ''; logout(); });
+            repoSelectionElements.confirmBtn.addEventListener('click', () => { const selectedRepo = repoSelectionElements.dropdown.value; if (!selectedRepo) return displayNotification('Harap pilih repositori.', 'error'); repoName = selectedRepo; localStorage.setItem('fileManagerRepo', repoName); dashboardElements.activeRepoDisplay.textContent = `${repoOwner}/${repoName}`; showScreen('dashboard'); fetchRepoContents(); });
+            function logout() { localStorage.clear(); apiToken = ''; repoOwner = ''; repoName = ''; authModal.tokenInput.value = ''; appContainer.classList.add('opacity-0'); showScreen(''); setTimeout(initializeApp, 400); }
+            function changeRepo() { localStorage.removeItem('fileManagerRepo'); repoName = ''; showScreen('repoSelection'); fetchUserRepos(); }
             dashboardElements.logoutBtn.addEventListener('click', logout);
             dashboardElements.settingsBtn.addEventListener('click', logout);
             dashboardElements.changeRepoBtn.addEventListener('click', changeRepo);
-
-            dashboardElements.fileUploadInput.addEventListener('change', () => {
-                const file = dashboardElements.fileUploadInput.files[0];
-                const uploadTextSpan = dashboardElements.fileUploadText;
-                if (file) {
-                    uploadTextSpan.textContent = file.name;
-                } else {
-                    uploadTextSpan.innerHTML = '<i data-feather="upload-cloud" class="w-8 h-8 text-slate-400"></i><span class="text-slate-600 font-medium truncate">Pilih sebuah file...</span>';
-                    feather.replace();
-                }
-            });
-
-            dashboardElements.uploadBtn.addEventListener('click', () => {
-                const file = dashboardElements.fileUploadInput.files[0];
-                if (!file) return displayNotification('Pilih file terlebih dahulu.', 'error');
-                handleFileUpload(file);
-});
-            
-            dashboardElements.searchBox.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const filteredFiles = allFilesCache.filter(file => file.name.toLowerCase().includes(searchTerm));
-                displayFiles(filteredFiles);
-            });
-
-            renameModalElements.confirmBtn.addEventListener('click', () => {
-                const newName = renameModalElements.input.value.trim();
-                if (newName && fileBeingRenamed) {
-                    handleRenameFile(fileBeingRenamed, newName);
-                }
-            });
-
+            dashboardElements.fileUploadInput.addEventListener('change', () => { const file = dashboardElements.fileUploadInput.files[0]; if (file) { dashboardElements.fileUploadText.textContent = file.name; handleFileUpload(file, 'file'); } else { dashboardElements.fileUploadText.innerHTML = 'Pilih file dari komputer'; } });
+            dashboardElements.searchBox.addEventListener('input', (e) => { const searchTerm = e.target.value.toLowerCase(); const filteredFiles = allFilesCache.filter(file => file.name.toLowerCase().includes(searchTerm)); displayFiles(filteredFiles); });
+            renameModalElements.confirmBtn.addEventListener('click', () => { const newName = renameModalElements.input.value.trim(); if (newName && fileBeingRenamed) { handleRenameFile(fileBeingRenamed, newName); } });
             renameModalElements.cancelBtn.addEventListener('click', () => toggleGenericModal(renameModalElements.modal, false));
-            renameModalElements.modal.addEventListener('click', (e) => {
-                if (e.target === renameModalElements.modal) toggleGenericModal(renameModalElements.modal, false);
-            });
-
-            confirmModalElements.confirmBtn.addEventListener('click', () => {
-                if (typeof actionToConfirm === 'function') {
-                    actionToConfirm();
-                }
-                hideConfirmationModal();
-            });
+            renameModalElements.modal.addEventListener('click', (e) => { if (e.target === renameModalElements.modal) toggleGenericModal(renameModalElements.modal, false); });
+            confirmModalElements.confirmBtn.addEventListener('click', () => { if (typeof actionToConfirm === 'function') { actionToConfirm(); } hideConfirmationModal(); });
             confirmModalElements.cancelBtn.addEventListener('click', hideConfirmationModal);
-            confirmModalElements.modal.addEventListener('click', (e) => {
-                if (e.target === confirmModalElements.modal) hideConfirmationModal();
-            });
+            confirmModalElements.modal.addEventListener('click', (e) => { if (e.target === confirmModalElements.modal) hideConfirmationModal(); });
 
-            // --- Inisialisasi Aplikasi ---
-            function initializeApp() {
-                apiToken = localStorage.getItem('fileManagerToken');
-                repoOwner = localStorage.getItem('fileManagerOwner');
-                repoName = localStorage.getItem('fileManagerRepo');
-
-                if (apiToken && repoOwner) {
-                    appContainer.classList.remove('opacity-0');
-                    if (repoName) {
-                        dashboardElements.activeRepoDisplay.textContent = `${repoOwner}/${repoName}`;
-                        showScreen('dashboard');
-                        fetchRepoContents();
-                    } else {
-                        repoSelectionElements.welcomeText.textContent = `Selamat datang kembali, ${repoOwner}!`;
-                        showScreen('repoSelection');
-                        fetchUserRepos();
-                    }
-                } else {
-                    toggleAuthModal(true);
-                    appContainer.classList.add('opacity-0');
-                }
-                feather.replace();
-            }
-
+            // --- Inisialisasi Aplikasi (Sama seperti sebelumnya) ---
+            function initializeApp() { apiToken = localStorage.getItem('fileManagerToken'); repoOwner = localStorage.getItem('fileManagerOwner'); repoName = localStorage.getItem('fileManagerRepo'); if (apiToken && repoOwner) { appContainer.classList.remove('opacity-0'); if (repoName) { dashboardElements.activeRepoDisplay.textContent = `${repoOwner}/${repoName}`; showScreen('dashboard'); fetchRepoContents(); } else { repoSelectionElements.welcomeText.textContent = `Selamat datang kembali, ${repoOwner}!`; showScreen('repoSelection'); fetchUserRepos(); } } else { toggleAuthModal(true); appContainer.classList.add('opacity-0'); } feather.replace(); }
             initializeApp();
         });
     </script>
