@@ -91,7 +91,7 @@
         ::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #818cf8; }
 
-        /* [REVISED] Style untuk Print yang lebih profesional */
+        /* Style untuk Print yang lebih profesional */
         @media print {
             body > *:not(#print-area-wrapper) {
                 display: none !important;
@@ -327,7 +327,6 @@
         function displayNotification(message, type = 'info') { toastElements.text.textContent = message; toastElements.icon.innerHTML = ICONS[type] || ICONS.info; feather.replace(); toastElements.notification.classList.remove('opacity-0', 'translate-y-10'); setTimeout(() => { toastElements.notification.classList.add('opacity-0', 'translate-y-10'); }, 3500); }
         function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = error => reject(error); }); }
         
-        // [REVISED] Fungsi ini mengambil gambar sebagai data mentah (blob) dan mengubahnya menjadi Base64
         async function urlToDataUri(url) {
             if (!url) return null;
             try {
@@ -425,7 +424,13 @@
             }
 
             const editingIndex = notesModalElements.editingIndexInput.value;
-            const today = new Date().toISOString().split('T')[0];
+            
+            // [FIXED] Menggunakan waktu lokal untuk tanggal
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const today = `${year}-${month}-${day}`;
             
             if (editingIndex !== '') {
                 dailyNotesCache[editingIndex].Deskripsi = description;
@@ -565,12 +570,11 @@
             const tableBody = dailyNotesCache.map((note, index) => {
                 const date = new Date(note.Tanggal + 'T00:00:00');
                 const dayName = isNaN(date) ? '' : days[date.getDay()];
-                // Di sini kita hanya memasukkan data teks. Gambar akan ditangani oleh didDrawCell
                 return [
                     note.Tanggal || '',
                     dayName,
                     note.Deskripsi || '',
-                    '' // Placeholder untuk gambar
+                    '' // Placeholder kosong untuk gambar
                 ];
             });
 
@@ -608,7 +612,6 @@
                 },
                 didDrawCell: function(data) {
                     if (data.column.index === 3 && data.cell.section === 'body') {
-                        // Ambil data gambar dari array yang sudah disiapkan, berdasarkan index baris
                         const base64Image = imagesData[data.row.index];
                         if (base64Image) {
                             try {
