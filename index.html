@@ -33,6 +33,7 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
+            padding-bottom: 40px; /* Memberi ruang untuk footer */
         }
         /* Efek Latar Belakang Gradien Halus */
         body::before {
@@ -91,7 +92,7 @@
         ::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #818cf8; }
 
-        /* Style untuk Print yang lebih profesional */
+        /* [REVISED] Style untuk Print yang lebih profesional */
         @media print {
             body > *:not(#print-area-wrapper) {
                 display: none !important;
@@ -266,6 +267,11 @@
         </main>
     </div>
 
+    <!-- [NEW] Footer -->
+    <footer class="fixed bottom-0 left-0 w-full text-center p-2 bg-slate-100/50 backdrop-blur-sm">
+        <p class="text-xs text-slate-500">Dibuat untuk mas Andy</p>
+    </footer>
+
     <script>
     // Inisialisasi jsPDF
     const { jsPDF } = window.jspdf;
@@ -408,41 +414,60 @@
         }
 
         // --- Logika Catatan Harian (CRUD, Tabel, Ekspor) ---
+        async function ensureNotesCacheIsLoaded() {
+            try {
+                const fileData = await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${dailyLogFileName}`);
+                const csvContent = decodeURIComponent(escape(atob(fileData.content)));
+                const parseResult = Papa.parse(csvContent, { header: true, skipEmptyLines: true });
+                dailyNotesCache = parseResult.data;
+            } catch (error) {
+                if (error.message.includes("404") || error.message.includes("Not Found")) {
+                    dailyNotesCache = [];
+                } else {
+                    displayNotification('Gagal memuat data catatan yang ada.', 'error');
+                    throw error; // Lemparkan error agar proses penyimpanan berhenti
+                }
+            }
+        }
+
         function setNoteSaveLoading(isLoading) { notesModalElements.saveBtn.disabled = isLoading; notesModalElements.saveBtnText.textContent = isLoading ? 'Menyimpan...' : 'Simpan Catatan'; notesModalElements.spinner.classList.toggle('hidden', !isLoading); }
         async function uploadNoteImage(file) { const timestamp = new Date().toISOString().replace(/[-:.]/g, '').replace('T', '_'); const newFileName = `img_${timestamp}_${file.name}`; notesModalElements.uploadFeedback.textContent = `Mengunggah ${newFileName}...`; try { const base64Content = await fileToBase64(file); const result = await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/images/${newFileName}`, { method: 'PUT', body: JSON.stringify({ message: `feat: add note image ${newFileName}`, content: base64Content }), }); notesModalElements.uploadFeedback.textContent = 'Gambar berhasil diunggah!'; return result.content.download_url; } catch (error) { displayNotification(`Gagal mengunggah gambar: ${error.message}`, 'error'); notesModalElements.uploadFeedback.textContent = 'Gagal mengunggah.'; return null; } }
+        
+        // [REVISED] Logika penyimpanan yang lebih aman
         async function handleSaveNote() {
             const description = notesModalElements.descriptionInput.value.trim();
             if (!description) { displayNotification('Deskripsi pekerjaan tidak boleh kosong.', 'error'); return; }
             setNoteSaveLoading(true);
 
-            let imageUrl = notesModalElements.imagePreview.src;
-            const imageFile = notesModalElements.imageInput.files[0];
-            if (imageFile) {
-                const newImageUrl = await uploadNoteImage(imageFile);
-                if (!newImageUrl) { setNoteSaveLoading(false); return; }
-                imageUrl = newImageUrl;
-            }
-
-            const editingIndex = notesModalElements.editingIndexInput.value;
-            
-            // [FIXED] Menggunakan waktu lokal untuk tanggal
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const today = `${year}-${month}-${day}`;
-            
-            if (editingIndex !== '') {
-                dailyNotesCache[editingIndex].Deskripsi = description;
-                dailyNotesCache[editingIndex]['Link Gambar'] = imageUrl;
-            } else {
-                dailyNotesCache.push({ 'Tanggal': today, 'Deskripsi': description, 'Link Gambar': imageUrl });
-            }
-
-            const updatedCsv = Papa.unparse(dailyNotesCache);
-            const base64UpdatedContent = btoa(unescape(encodeURIComponent(updatedCsv)));
-
             try {
+                await ensureNotesCacheIsLoaded();
+
+                let imageUrl = notesModalElements.imagePreview.src;
+                const imageFile = notesModalElements.imageInput.files[0];
+                if (imageFile) {
+                    const newImageUrl = await uploadNoteImage(imageFile);
+                    if (!newImageUrl) { setNoteSaveLoading(false); return; }
+                    imageUrl = newImageUrl;
+                }
+
+                const editingIndex = notesModalElements.editingIndexInput.value;
+                
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const today = `${year}-${month}-${day}`;
+                
+                if (editingIndex !== '') {
+                    dailyNotesCache[editingIndex].Deskripsi = description;
+                    dailyNotesCache[editingIndex]['Link Gambar'] = imageUrl;
+                } else {
+                    dailyNotesCache.push({ 'Tanggal': today, 'Deskripsi': description, 'Link Gambar': imageUrl });
+                }
+
+                const updatedCsv = Papa.unparse(dailyNotesCache);
+                const base64UpdatedContent = btoa(unescape(encodeURIComponent(updatedCsv)));
+
                 const fileData = await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${dailyLogFileName}`).catch(() => null);
                 await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${dailyLogFileName}`, {
                     method: 'PUT',
@@ -452,13 +477,17 @@
                         sha: fileData ? fileData.sha : null
                     }),
                 });
+
                 displayNotification(`Catatan berhasil ${editingIndex !== '' ? 'diperbarui' : 'disimpan'}!`, 'success');
                 toggleGenericModal(notesModalElements.modal, false);
-                if (!tableModalElements.modal.classList.contains('hidden')) {
+
+                if (tableModalElements.modal.classList.contains('hidden') === false) {
                     await loadAndDisplayNotesTable();
                 }
                 await fetchRepoContents();
-            } catch (error) { /* handled */ } finally {
+            } catch (error) {
+                // Error sudah ditangani di fungsi lain, cukup hentikan loading
+            } finally {
                 setNoteSaveLoading(false);
             }
         }
@@ -494,46 +523,35 @@
             noNotesMsg.classList.add('hidden');
             tableBody.innerHTML = '';
             
-            try {
-                const fileData = await callGitHubAPI(`repos/${repoOwner}/${repoName}/contents/${dailyLogFileName}`);
-                const csvContent = decodeURIComponent(escape(atob(fileData.content)));
-                const parseResult = Papa.parse(csvContent, { header: true, skipEmptyLines: true });
-                dailyNotesCache = parseResult.data;
+            await ensureNotesCacheIsLoaded();
 
-                if (dailyNotesCache.length === 0) {
-                    noNotesMsg.classList.remove('hidden');
-                } else {
-                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                    dailyNotesCache.forEach((note, index) => {
-                        const date = new Date(note.Tanggal + 'T00:00:00');
-                        const dayName = isNaN(date) ? '' : days[date.getDay()];
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-slate-50";
-                        const imageUrl = note['Link Gambar'];
-                        tr.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${escapeHtml(note.Tanggal || '')}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${dayName}</td>
-                            <td class="px-6 py-4 whitespace-normal text-sm text-slate-800">${escapeHtml(note.Deskripsi || '')}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                ${imageUrl ? `<img src="${imageUrl}" onerror="this.style.display='none'" class="h-12 w-12 object-cover rounded-md">` : 'Tidak ada'}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button class="edit-note-btn text-indigo-600 hover:text-indigo-900" data-index="${index}">Edit</button>
-                            </td>
-                        `;
-                        tableBody.appendChild(tr);
-                    });
-                    table.classList.remove('hidden');
-                }
-            } catch (error) {
-                if (error.message.includes("404") || error.message.includes("Not Found")) {
-                    dailyNotesCache = [];
-                    noNotesMsg.classList.remove('hidden');
-                }
-            } finally {
-                loader.style.display = 'none';
-                feather.replace();
+            if (dailyNotesCache.length === 0) {
+                noNotesMsg.classList.remove('hidden');
+            } else {
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                dailyNotesCache.forEach((note, index) => {
+                    const date = new Date(note.Tanggal + 'T00:00:00');
+                    const dayName = isNaN(date) ? '' : days[date.getDay()];
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50";
+                    const imageUrl = note['Link Gambar'];
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${escapeHtml(note.Tanggal || '')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${dayName}</td>
+                        <td class="px-6 py-4 whitespace-normal text-sm text-slate-800">${escapeHtml(note.Deskripsi || '')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                            ${imageUrl ? `<img src="${imageUrl}" onerror="this.style.display='none'" class="h-12 w-12 object-cover rounded-md">` : 'Tidak ada'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="edit-note-btn text-indigo-600 hover:text-indigo-900" data-index="${index}">Edit</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+                table.classList.remove('hidden');
             }
+            loader.style.display = 'none';
+            feather.replace();
         }
         
         async function handlePrint() {
